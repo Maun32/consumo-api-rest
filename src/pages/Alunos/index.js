@@ -1,9 +1,10 @@
 import { get } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { FaEdit, FaUserCircle, FaWindowClose } from 'react-icons/fa';
+import { FaEdit, FaExclamation, FaUserCircle, FaWindowClose } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 // Importa configuração de estilo global
+import { toast } from 'react-toastify';
 import axios from '../../services/axios';
 import { Container } from '../../styles/GlobalStyles';
 import { AlunoContainer, ProfilePicture } from './styled';
@@ -23,6 +24,36 @@ export default function Alunos() {
     }
     getData();
   }, []);
+
+  const handleDeleteAsk = (e) => {
+    e.preventDefault();
+    const exclamation = e.currentTarget.nextSibling;
+    exclamation.setAttribute('display', 'block');
+    e.currentTarget.remove();
+  };
+
+  const handleDelete = async (e, id, index) => {
+    e.persist();
+
+    try {
+      setIsLoading(true);
+      await axios.delete(`/alunos/${id}`);
+      const novosAlunos = [...alunos];
+      novosAlunos.splice(index, 1);
+      setAlunos(novosAlunos);
+      setIsLoading(false);
+    } catch (err) {
+      const status = get(err, 'response.status', 0);
+
+      if (status === 401) {
+        toast.error('Você precisa fazer login');
+      } else {
+        toast.error('Ocorreu um erro ao excluir aluno');
+      }
+
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Container>
@@ -47,9 +78,17 @@ export default function Alunos() {
               <FaEdit className="icon-edit-user" size={16} />
             </Link>
 
-            <Link to={`/aluno/${aluno.id}/delete`}>
+            <Link onClick={handleDeleteAsk} to={`/aluno/${aluno.id}/delete`}>
               <FaWindowClose className="icon-delete-user" size={16} />
             </Link>
+
+            <FaExclamation
+              size={16}
+              display="none"
+              cursor="pointer"
+              color="#C3073F"
+              onClick={(e) => handleDelete(e, aluno.id)}
+            />
           </div>
         ))}
       </AlunoContainer>
