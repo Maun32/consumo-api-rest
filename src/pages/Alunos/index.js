@@ -1,13 +1,14 @@
 import { get } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaExclamation, FaUserCircle, FaWindowClose } from 'react-icons/fa';
+import { IoAddCircleSharp } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 
 // Importa configuração de estilo global
 import { toast } from 'react-toastify';
 import axios from '../../services/axios';
 import { Container } from '../../styles/GlobalStyles';
-import { AlunoContainer, ProfilePicture } from './styled';
+import { AlunoContainer, NovoAluno, ProfilePicture } from './styled';
 
 import Loading from '../../components/Loading';
 
@@ -60,6 +61,11 @@ export default function Alunos() {
       <Loading isLoading={isLoading} />
 
       <h1>Alunos</h1>
+
+      <NovoAluno to="/aluno/">
+        <IoAddCircleSharp />
+        Novo aluno
+      </NovoAluno>
 
       <AlunoContainer>
         {alunos.map((aluno) => (
